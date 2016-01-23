@@ -4,10 +4,16 @@
  */
 import poly from './poly.js';
 
-let scrolling = (() => {
-  window.requestAnimFrame = (() => {
-    return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || false;
-  })();
+const scrolling = (() => {
+  if (typeof window === 'undefined' || !window) {
+    return null;
+  }
+
+  window.requestAnimFrame = (() =>
+    window.requestAnimationFrame ||
+    window.webkitRequestAnimationFrame ||
+    window.mozRequestAnimationFrame || false
+  )();
 
   // selectors
   const elementsSelector = '.js-scroll';
@@ -26,18 +32,18 @@ let scrolling = (() => {
   let isActive = false;
 
   // callbacks triggered only when element is in view
-  let callbacks = {};
+  const callbacks = {};
 
   // callbacks triggered always when the element is on the page
-  let alwaysCallbacks = {
+  const alwaysCallbacks = {
     /*
     Example:
     cartBottom: function(elCache, sT) {
       elCache.contentHeight = elCache.contentHeight || $(elCache.el).children().eq(0).outerHeight();
-      if ( sT + windowHeight > parseInt(elCache.contentHeight, 10) + parseInt(elCache.top, 10) && !elCache.isFixed ) {
+      if (sT + windowHeight > parseInt(elCache.contentHeight, 10) + parseInt(elCache.top, 10) && !elCache.isFixed) {
         poly.addClass(elCache.el, 'is-fixed');
         elCache.isFixed = true;
-      } else if ( sT + windowHeight <= parseInt(elCache.contentHeight, 10) + parseInt(elCache.top, 10) && elCache.isFixed ) {
+      } else if ((sT + windowHeight <= parseInt(elCache.contentHeight, 10) + parseInt(elCache.top, 10)) && elCache.isFixed) {
         poly.removeClass(elCache.el, 'is-fixed');
         elCache.isFixed = false;
       }
@@ -55,7 +61,7 @@ let scrolling = (() => {
   }
 
   function addCallback(callbackName, callbackFunction, always = false) {
-    if ( always ) {
+    if (always) {
       alwaysCallbacks[callbackName] = callbackFunction;
     } else {
       callbacks[callbackName] = callbackFunction;
@@ -63,10 +69,10 @@ let scrolling = (() => {
   }
 
   function saveElementCache(el) {
-    let boundingRect = el.getBoundingClientRect();
-    let _scrollTop = window.scrollY || window.pageYOffset;
-    let callback = (el.getAttribute('data-callback')) ? el.getAttribute('data-callback') || false : false;
-    let elementCache = {
+    const boundingRect = el.getBoundingClientRect();
+    const _scrollTop = window.scrollY || window.pageYOffset;
+    const callback = el.getAttribute('data-callback') ? el.getAttribute('data-callback') || false : false;
+    const elementCache = {
       el,
       callback,
       top: boundingRect.top + _scrollTop,
@@ -87,18 +93,18 @@ let scrolling = (() => {
   }
 
   function triggerElementCallback(elCache, always = false) {
-    if ( !elCache.callback ) {
+    if (!elCache.callback) {
       return;
     }
 
-    if ( always ) {
-      if ( elCache.callback in alwaysCallbacks ) {
+    if (always) {
+      if (elCache.callback in alwaysCallbacks) {
         // assuming the callback is always a function, not testing --> want it to happen FAST
-        alwaysCallbacks[ elCache.callback ](elCache, scrollTop);
+        alwaysCallbacks[elCache.callback](elCache, scrollTop);
       }
-    } else if ( elCache.callback in callbacks ) {
+    } else if (elCache.callback in callbacks) {
       // assuming the callback is always a function, not testing --> want it to happen FAST
-      callbacks[ elCache.callback ](elCache, scrollTop);
+      callbacks[elCache.callback](elCache, scrollTop);
     }
   }
 
@@ -107,9 +113,9 @@ let scrolling = (() => {
     checks the element's calculated state against its current state
     and applies relevant classes if the state changes
     */
-    Object.keys(states).forEach( (key) => {
-      let state = states[key];
-      let stateDash = camelToDash(key);
+    Object.keys(states).forEach((key) => {
+      const state = states[key];
+      const stateDash = camelToDash(key);
       if (!oldStates) {
         if (state) {
           poly.addClass(elCache.el, stateDash);
@@ -127,40 +133,40 @@ let scrolling = (() => {
   }
 
   function renderElement(elCache) {
-    let states = {};
+    const states = {};
 
-    if ( scrollTop + windowHeight > elCache.top && scrollTop <= elCache.top + elCache.height ) {
+    if (scrollTop + windowHeight > elCache.top && scrollTop <= elCache.top + elCache.height) {
       states.isInView = true;
       triggerElementCallback(elCache);
     } else {
       states.isInView = false;
     }
 
-    if ( scrollTop + windowHeight / 2 >= elCache.top ) {
+    if (scrollTop + windowHeight / 2 >= elCache.top) {
       states.isPastHalf = true;
     } else {
       states.isPastHalf = false;
     }
 
-    if ( scrollTop + windowHeight * 0.75 >= elCache.top ) {
+    if (scrollTop + windowHeight * 0.75 >= elCache.top) {
       states.isPastQuarter = true;
     } else {
       states.isPastQuarter = false;
     }
 
-    if ( scrollTop + headerHeight >= elCache.top ) {
+    if (scrollTop + headerHeight >= elCache.top) {
       states.isPastHeader = true;
     } else {
       states.isPastHeader = false;
     }
 
-    if ( scrollTop >= elCache.top ) {
+    if (scrollTop >= elCache.top) {
       states.isPastTop = true;
     } else {
       states.isPastTop = false;
     }
 
-    if ( scrollTop + windowHeight > elCache.top + elCache.height ) {
+    if (scrollTop + windowHeight > elCache.top + elCache.height) {
       states.isPastBottom = true;
     } else {
       states.isPastBottom = false;
@@ -175,7 +181,7 @@ let scrolling = (() => {
     triggerElementCallback(elCache, true);
 
     // The following mutates the function parameter, but that is an intentional behaviour
-    elCache.states = states;
+    elCache.states = states; // eslint-disable-line no-param-reassign
     return elCache;
   }
 
@@ -185,7 +191,7 @@ let scrolling = (() => {
   }
 
   function onFrame() {
-    if ( !isActive ) {
+    if (!isActive) {
       return true;
     }
     render();
@@ -236,5 +242,5 @@ let scrolling = (() => {
     getWindowWidth,
     setHeaderHeight
   };
-}());
+})();
 export default scrolling;

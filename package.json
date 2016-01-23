@@ -1,0 +1,28 @@
+{
+  "name": "scrolling.js",
+  "version": "1.0.0",
+  "description": "",
+  "main": "scrolling.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/widmanski/scrolling.js.git"
+  },
+  "author": "widmanski",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/widmanski/scrolling.js/issues"
+  },
+  "homepage": "https://github.com/widmanski/scrolling.js#readme",
+  "dependencies": {
+    "eslint": "^1.10.3",
+    "eslint-config-airbnb": "^4.0.0",
+    "eslint-plugin-import": "^0.12.1",
+    "eslint-plugin-react": "^3.15.0"
+  }
+}
